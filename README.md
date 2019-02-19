@@ -19,5 +19,22 @@
 
 ## Timeline
 
-[See the poster.](poster.pdf)
+A rough timeline:
+
+```text
+                        20/2 27/3  6/3 13/3 20/3 27/3  3/4 Etr 24/4  1/5
+Task Management          ##
+Hardware introduction    ##   ##
+Motor actuation               ##   ##   ##
+Gripper actuation             ##   ##   ##
+Acquire image stream          ##   ##   ##
+Detecting POIs                          ##   ##   ##
+Pathfinding                                  ##   ##   ##
+Terrain mapping                                        ##   ##   ##   ##
+Integration                        --   --   --   --   --   --   --   --
+```
+
+## Press kit
+
++ [Our poster](poster.pdf)
 
