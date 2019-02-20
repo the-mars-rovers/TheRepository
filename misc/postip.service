@@ -1,0 +1,13 @@
+[Unit]
+Description=Post the IPs to ix.io
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=idle
+User=pi
+WorkingDirectory=/home/pi/misc
+ExecStart=/home/pi/misc/postip.sh
+
+[Install]
+WantedBy=multi-user.target

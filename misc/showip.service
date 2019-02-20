@@ -1,0 +1,13 @@
+[Unit]
+Description=Show IPs on OLED
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=exec
+User=pi
+WorkingDirectory=/home/pi/misc
+ExecStart=/usr/bin/python2 showip.py
+
+[Install]
+WantedBy=multi-user.target

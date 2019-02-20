@@ -1,7 +1,9 @@
 # For Arch Linux (Dries PC & Laptop)
 # Source by using "source dries_setup_env" inside of your terminal or bashrc.
 
+# Activate _global_ ROS environment
 source /opt/ros/melodic/setup.bash
+# Make sure we use Python 3
 alias catkin_make="catkin_make -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.7m -DPYTHON_LIBRARY=/usr/lib/libpython3.so"
+# Activate _this_ POS environment
 source catkin_ws/devel/setup.bash
-
