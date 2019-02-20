@@ -13,7 +13,7 @@
 ## Design
 
  Perception | Decision     | Actuation
-------------|--------------|-----------
+------------|--------------|-----------------------
  3D camera  | Raspberry PI | Motor: Control wheels
             |              | Gripper
 
@@ -22,16 +22,15 @@
 A rough timeline:
 
 ```text
-                        20/2 27/3  6/3 13/3 20/3 27/3  3/4 Etr 24/4  1/5
-Task Management          ##
-Hardware introduction    ##   ##
-Motor actuation               ##   ##   ##
-Gripper actuation             ##   ##   ##
-Acquire image stream          ##   ##   ##
-Detecting POIs                          ##   ##   ##
-Pathfinding                                  ##   ##   ##
-Terrain mapping                                        ##   ##   ##   ##
-Integration                        --   --   --   --   --   --   --   --
+                            20/2 27/3  6/3 13/3 20/3 27/3  3/4 Etr 24/4  1/5
+    Task Management          ##
+    Hardware introduction    ##   ##
+C   Motor actuation               ##   ##
+R   Acquire image stream          ##   ##
+R   Detecting POIs                     ##   ##   ##
+J   Terrain mapping                    ##   ##   ##   ##
+L   Pathfinding                                  ##   ##   ##
+D   Integration                        --   --   --   --   --   --   --   --
 ```
 
 ## Press kit
