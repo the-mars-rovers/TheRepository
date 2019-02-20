@@ -40,23 +40,30 @@ font = ImageFont.truetype('ttf/FiraCode-Regular.ttf', 14)
 top = -2
 left = 0
 while True:
-    draw.rectangle((0, 0, width, height), outline=0, fill=0)
+    try:
+        draw.rectangle((0, 0, width, height), outline=0, fill=0)
 
-    ips = subprocess.check_output(["hostname", "-I"])
-    offset = 0
-    for ip in ips.split(' '):
-        if len(ip) > 16:
-            continue  # IPv6
-        draw.text((left, top + offset), ip, font=font, fill=255)
-        offset += 16
+        ips = subprocess.check_output(["hostname", "-I"])
+        offset = 0
+        for ip in ips.split(' '):
+            if len(ip) > 16:
+                continue  # IPv6
+            draw.text((left, top + offset), ip, font=font, fill=255)
+            offset += 16
 
-    disp.image(image)
-    disp.display()
-    time.sleep(10)
+        disp.image(image)
+        disp.display()
+        time.sleep(10)
 
-    left += 1
-    top += 1
+        left += 1
+        top += 1
 
-    if left >= 4:
-        left = 0
-        top = -2
+        if left >= 4:
+            left = 0
+            top = -2
+
+    except KeyboardInterrupt:
+        draw.rectangle((0, 0, width, height), outline=0, fill=0)
+        disp.image(image)
+        disp.display()
+        raise

@@ -4,7 +4,7 @@ Wants=network-online.target
 After=network.target network-online.target
 
 [Service]
-Type=exec
+Type=idle
 User=pi
 WorkingDirectory=/home/pi/misc
 ExecStart=/usr/bin/python2 showip.py
