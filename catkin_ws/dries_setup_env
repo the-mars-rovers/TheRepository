@@ -1,0 +1,7 @@
+# For Arch Linux (Dries PC & Laptop)
+# Source by using "source dries_setup_env" inside of your terminal or bashrc.
+
+source /opt/ros/melodic/setup.bash
+alias catkin_make="catkin_make -DPYTHON_EXECUTABLE=/usr/bin/python3 -DPYTHON_INCLUDE_DIR=/usr/include/python3.7m -DPYTHON_LIBRARY=/usr/lib/libpython3.so"
+source catkin_ws/devel/setup.bash
+
