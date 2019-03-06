@@ -24,6 +24,7 @@ def pathfinding_straight():
 
 
 
+
 def update(message):
     """
 
