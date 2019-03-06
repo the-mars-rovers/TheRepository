@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import Twist
-from std_msgs.msg import String
+#from std_msgs.msg import String
 from turtlebot_movement.msg import Movement     # custom message
 from math import pi
 
@@ -74,7 +74,9 @@ def rotate(speed, angle, vel_msg, velocity_publisher):
 
 
 def move(move_msg):
-    vel_pub = rospy.Publisher('/turtle1/cmd_vel', Twist, queue_size=10)
+    print("Getting ready to move")
+    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+    #fb_pub = rospy.Publisher('motor_feedback', Motor_Feedback, queue_size=10)
     vel_msg = Twist()
 
     sp = move_msg.speed
@@ -87,11 +89,12 @@ def move(move_msg):
         rotate(an_sp, an, vel_msg, vel_pub)
 
     translate(sp, di, fo, vel_msg, vel_pub)
+    print("Done moving")
 
 
 def listener():
     rospy.init_node('turtlebot_movement')
-    vel_pub = rospy.Publisher('/turtle1/cmd_vel', Twist, queue_size=10)
+    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
     dummy_pub = rospy.Publisher('motor_instructions', Movement, queue_size=10)
     rospy.Subscriber('motor_instructions', Movement, move)
     print("Listener on motor_instructions started.")
