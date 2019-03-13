@@ -5,64 +5,72 @@
 # pathfinding_straight.py
 #############################################################
 
-#############################################################
 # imports
-#############################################################
 import rospy
-from pathfinding_straight.msg import Motor_Feedback
-from pathfinding_straight.msg import Poic
+# from pathfinding_straight.msg import Motor_Feedback
+# from pathfinding_straight.msg import Poic
 from turtlebot_movement.msg import Movement
 
 
-def pathfinding_straight():
+def process_message():
     """
-    Function that loops as long as node is running.
+    Processes the message from poic
+    :param message:
     :return:
     """
-    listeners()
-    pub = talker()
+    sub = rospy.Subscriber('motor_instructions', Movement, None)
+    pub = rospy.Publisher('motor_instructions', Movement, queue_size=10)
+    for i in range(0, 10):
+        print(str(i))
+        # create new message
+        new_message = Movement()
+        new_message.speed = 1
+        new_message.dist = i
+        new_message.forward = True
+        new_message.angle_speed = 10
+        new_message.angle = 20
 
-
+        pub.publish(new_message)
 
 
 def update(message):
     """
-
+    Callback function for the listeners
     :param message:
     :return:
     """
+    waiting_for_feedback = False
+    message_in_queue = False
+
+    # if the motor is giving feedback
     if message.type == "Motor_Feedback":
-        pass
+        if message.ready:
+            waiting_for_feedback = False
 
-    if message.type == "Poic":
-        pass
+    # if we  get new information from the camera
+    if message.type == "Poic" or message_in_queue:
+        # if we are still waiting for feedback from the actuators don't do anything
+        if waiting_for_feedback:
+            pass
+        else:
+            process_message(message)
 
 
-def listeners():
+def listener():
     """
     Sets up subscribers for this node.
     :return:
     """
     # setup node
     rospy.init_node('pathfinding_straight', anonymous=False)
+    process_message()
 
     # subscribe to necessary topics
-    print("Subcribing ")
-    rospy.Subscriber("motor_feedback", Motor_Feedback, update)
-    rospy.Subscriber("poic", Poic, update)
-
+    print("Subscribing ")
+    # rospy.Subscriber("motor_feedback", Motor_Feedback, update)
+    # rospy.Subscriber("poic", Poic, update)
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
-
-
-def talker():
-    """
-
-    :return:
-    """
-    # create publishers
-    pub = rospy.Publisher('motor_instructions', Movement, queue_size = 10)
-    return pub
 
 
 if __name__ == '__main__':
@@ -70,7 +78,7 @@ if __name__ == '__main__':
     Main function for the pathfinding node(Straight).
     """
     try:
-        pathfinding_straight()
+        listener()
     except rospy.ROSInterruptException:
         print("Something went wrong")
         pass
