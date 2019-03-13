@@ -23,18 +23,21 @@ def translate(speed, dist, forward, vel_msg, velocity_publisher):
     t0 = float(rospy.Time.now().to_sec())
     current_distance = 0
 
-    # Loop to move the turtle in an specified distance
-    while current_distance < dist:
-        # Publish the velocity
+    try:
+        # Loop to move the turtle in an specified distance
+        while current_distance < dist:
+            # Publish the velocity
+            print(velocity_publisher.publish(vel_msg))
+            rospy.sleep(0.5)
+            # Takes actual time to velocity calculus
+            t1 = float(rospy.Time.now().to_sec())
+            # Calculates distancePoseStamped
+            current_distance = speed * (t1 - t0)
+    finally:
+        # After the loop, stops the robot
+        vel_msg.linear.x = 0
+        # Force the robot to stop
         velocity_publisher.publish(vel_msg)
-        # Takes actual time to velocity calculus
-        t1 = float(rospy.Time.now().to_sec())
-        # Calculates distancePoseStamped
-        current_distance = speed * (t1 - t0)
-    # After the loop, stops the robot
-    vel_msg.linear.x = 0
-    # Force the robot to stop
-    velocity_publisher.publish(vel_msg)
 
 
 def rotate(speed, angle, vel_msg, velocity_publisher):
@@ -75,7 +78,7 @@ def rotate(speed, angle, vel_msg, velocity_publisher):
 
 def move(move_msg):
     print("Getting ready to move")
-    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
     #fb_pub = rospy.Publisher('motor_feedback', Motor_Feedback, queue_size=10)
     vel_msg = Twist()
 
@@ -94,8 +97,8 @@ def move(move_msg):
 
 def listener():
     rospy.init_node('turtlebot_movement')
-    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
-    dummy_pub = rospy.Publisher('motor_instructions', Movement, queue_size=10)
+    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+    dummy_pub = rospy.Publisher('motor_instructions', Movement, queue_size=10) #this publisher is just for testing purposes and is only here to create the topic 'motor_instructions'
     rospy.Subscriber('motor_instructions', Movement, move)
     print("Listener on motor_instructions started.")
     # spin() simply keeps python from exiting until this node is stopped
