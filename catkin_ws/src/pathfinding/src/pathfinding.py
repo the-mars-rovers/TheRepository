@@ -19,21 +19,20 @@ def process_message():
     :param message:
     :return:
     """
-    pub = rospy.Publisher('motor_instructions', Movement, queue_size=1)
-    rate = rospy.Rate(1)
-    for i in range(1, 3):
+    pub = rospy.Publisher('motor_instructions', Movement, queue_size=10)
+    for i in range(1, 1):
         print(str(i))
         # create new message
         # test
         new_message = Movement()
         new_message.speed = 1
-        new_message.dist = 0.01
+        new_message.dist = 0
         new_message.forward = True
         new_message.angle_speed = 30
-        new_message.angle = 0
+        new_message.angle = 90
 
         pub.publish(new_message)
-
+        rate = rospy.Rate(1)
         rate.sleep()
 
 
@@ -77,7 +76,7 @@ def listener():
     # publish to movement topic
     # pub = rospy.Publisher('motor_instructions', Movement, queue_size=10)
 
-    # Doing the first 4 rotates for 360 view
+    # Doing the first 4 rotates for 360° view
     # create the message
     # new_message = Movement()
     # new_message.speed = 1
@@ -88,7 +87,9 @@ def listener():
 
     # rotate 4 times and take a picture
 
-    # rospy.spin()
+
+
+    rospy.spin()
 
 
 if __name__ == '__main__':
