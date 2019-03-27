@@ -4,6 +4,7 @@ from geometry_msgs.msg import Twist
 #from std_msgs.msg import String
 from turtlebot_movement.msg import Movement     # custom message
 from math import pi
+import time
 
 
 def translate(speed, dist, forward, vel_msg, velocity_publisher):
@@ -23,18 +24,21 @@ def translate(speed, dist, forward, vel_msg, velocity_publisher):
     t0 = float(rospy.Time.now().to_sec())
     current_distance = 0
 
-    # Loop to move the turtle in an specified distance
-    while current_distance < dist:
-        # Publish the velocity
+    try:
+        # Loop to move the turtle in an specified distance
+        while current_distance < dist:
+            # Publish the velocity
+            velocity_publisher.publish(vel_msg)
+            #rospy.sleep(0.5)
+            # Takes actual time to velocity calculus
+            t1 = float(rospy.Time.now().to_sec())
+            # Calculates distancePoseStamped
+            current_distance = speed * (t1 - t0)
+    finally:
+        # After the loop, stops the robot
+        vel_msg.linear.x = 0
+        # Force the robot to stop
         velocity_publisher.publish(vel_msg)
-        # Takes actual time to velocity calculus
-        t1 = float(rospy.Time.now().to_sec())
-        # Calculates distancePoseStamped
-        current_distance = speed * (t1 - t0)
-    # After the loop, stops the robot
-    vel_msg.linear.x = 0
-    # Force the robot to stop
-    velocity_publisher.publish(vel_msg)
 
 
 def rotate(speed, angle, vel_msg, velocity_publisher):
@@ -56,14 +60,16 @@ def rotate(speed, angle, vel_msg, velocity_publisher):
 
     # Checking if our movement is CW or CCW
     if clockwise:
+        print("Turning clockwise")
         vel_msg.angular.z = -abs(angular_speed)
     else:
+        print("Turning counter-clockwise")
         vel_msg.angular.z = abs(angular_speed)
     # Setting the current time for distance calculus
     t0 = rospy.Time.now().to_sec()
     current_angle = 0
 
-    while current_angle < relative_angle:
+    while current_angle < abs(relative_angle):
         velocity_publisher.publish(vel_msg)
         t1 = rospy.Time.now().to_sec()
         current_angle = angular_speed * (t1 - t0)
@@ -75,7 +81,8 @@ def rotate(speed, angle, vel_msg, velocity_publisher):
 
 def move(move_msg):
     print("Getting ready to move")
-    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+    print(move_msg)
+    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
     #fb_pub = rospy.Publisher('motor_feedback', Motor_Feedback, queue_size=10)
     vel_msg = Twist()
 
@@ -90,12 +97,14 @@ def move(move_msg):
 
     translate(sp, di, fo, vel_msg, vel_pub)
     print("Done moving")
+    print("--------------------------")
+    return 1
 
 
 def listener():
     rospy.init_node('turtlebot_movement')
-    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
-    dummy_pub = rospy.Publisher('motor_instructions', Movement, queue_size=10)
+    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+    dummy_pub = rospy.Publisher('motor_instructions', Movement, queue_size=1) #this publisher is just for testing purposes and is only here to create the topic 'motor_instructions'
     rospy.Subscriber('motor_instructions', Movement, move)
     print("Listener on motor_instructions started.")
     # spin() simply keeps python from exiting until this node is stopped
