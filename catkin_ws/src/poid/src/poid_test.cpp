@@ -12,13 +12,15 @@ int main(int argc, char **argv)
    * The ros::init() function needs to see argc and argv so that it can perform
    * any ROS arguments and name remapping that were provided at the command line.
    * For programmatic remappings you can use a different version of init() which takes
-   * remappings directly, but for most command-line programs, passing argc and argv is
+   * remappadd_executable(poid_test src/poid_test.cpp)
+target_link_libraries(poid_test ${catkin_LIBRARIES})
+add_dependencies(poid_test poid_test_generate_messages_cpp)ings directly, but for most command-line programs, passing argc and argv is
    * the easiest way to do it.  The third argument to init() is the name of the node.
    *
    * You must call one of the versions of ros::init() before using any other
    * part of the ROS system.
    */
-  ros::init(argc, argv, "talker");
+  ros::init(argc, argv, "poid_test");
 
   /**
    * NodeHandle is the main access point to communications with the ROS system.
@@ -41,10 +43,10 @@ int main(int argc, char **argv)
    *
    * The second parameter to advertise() is the size of the message queue
    * used for publishing messages.  If messages are published more quickly
-   * than we can send them, the number here specifies how many messages to
+   * than we can send them, the number here specifies how many messages to 
    * buffer up before throwing some away.
    */
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("detect", 1000);
 
   ros::Rate loop_rate(10);
 
