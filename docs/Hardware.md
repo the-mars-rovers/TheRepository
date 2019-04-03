@@ -2,6 +2,7 @@
 
 + Base: Turtlebot 3 (Burger)
     + [e-Manual](http://emanual.robotis.com/docs/en/platform/turtlebot3/overview/)
+    + The robot PCB is the OpenRC 1.0 [e-Manual](http://emanual.robotis.com/docs/en/parts/controller/opencr10/)
     
 + Controller: Raspberry Pi 3B
     + [Installing ROS Kinetic on the Raspberry Pi](http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Kinetic%20on%20the%20Raspberry%20Pi)

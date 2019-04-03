@@ -7,3 +7,6 @@
 [submodule "catkin_ws/src/turtlebot3"]
 	path = catkin_ws/src/turtlebot3
 	url = https://github.com/ROBOTIS-GIT/turtlebot3.git
+[submodule "catkin_ws/src/rgbdslam_v2"]
+	path = catkin_ws/src/rgbdslam_v2
+	url = https://github.com/felixendres/rgbdslam_v2.git

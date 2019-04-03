@@ -1,0 +1,26 @@
+# depslib dependency file v1.0
+1552988748 source:/home/robbe/Documents/the-mars-rovers/detect_ball/segBGR.cpp
+	<iostream>
+	<opencv2/opencv.hpp>
+	<string.h>
+	"segBGR.h"
+
+1552988748 /home/robbe/Documents/the-mars-rovers/detect_ball/segBGR.h
+	<iostream>
+	<opencv2/opencv.hpp>
+
+1552988748 source:/home/robbe/Documents/the-mars-rovers/detect_ball/segHSV.cpp
+	<iostream>
+	<opencv2/opencv.hpp>
+	<string.h>
+	"segHSV.h"
+
+1552988748 /home/robbe/Documents/the-mars-rovers/detect_ball/segHSV.h
+	<iostream>
+	<opencv2/opencv.hpp>
+
+1553078438 source:/home/robbe/Documents/the-mars-rovers/detect_ball/main.cpp
+	<iostream>
+	<opencv2/opencv.hpp>
+	<string.h>
+
