@@ -93,9 +93,9 @@ def move(move_msg):
     fo = move_msg.forward
 
     if an != 0:
-        rotate(an_sp, an, vel_msg, vel_pub)
+        rotate(an_sp, an/2, vel_msg, vel_pub)
 
-    translate(sp, di, fo, vel_msg, vel_pub)
+    translate(sp, di*(4/10), fo, vel_msg, vel_pub)
     print("Done moving")
     print("--------------------------")
     return 1
