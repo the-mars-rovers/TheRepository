@@ -1,5 +1,4 @@
 ########################################
 # Messages
 ########################################
-uint8 seq_num
-bool ready
+uint8 seq_num               # sequence number of the message

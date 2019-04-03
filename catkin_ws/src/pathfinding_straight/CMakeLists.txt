@@ -51,6 +51,8 @@ add_message_files(
   FILES
   Motor_Feedback.msg
   Poic.msg
+  Detect.msg
+  Movement.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -72,6 +74,7 @@ generate_messages(
   DEPENDENCIES
   std_msgs  # Or other packages containing msgs
   geometry_msgs
+  pathfinding_straight
 )
 
 ################################################
