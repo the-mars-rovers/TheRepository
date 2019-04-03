@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import Twist
-#from std_msgs.msg import String
 from turtlebot_movement.msg import Movement     # custom message
 from math import pi
-import time
+from std_msgs.msg import Bool
 
 
 def translate(speed, dist, forward, vel_msg, velocity_publisher):
@@ -13,6 +12,7 @@ def translate(speed, dist, forward, vel_msg, velocity_publisher):
         vel_msg.linear.x = abs(speed)
     else:
         vel_msg.linear.x = -abs(speed)
+
     # Since we are moving just in x-axis
     vel_msg.linear.y = 0
     vel_msg.linear.z = 0
@@ -29,7 +29,7 @@ def translate(speed, dist, forward, vel_msg, velocity_publisher):
         while current_distance < dist:
             # Publish the velocity
             velocity_publisher.publish(vel_msg)
-            #rospy.sleep(0.5)
+            # rospy.sleep(0.5)
             # Takes actual time to velocity calculus
             t1 = float(rospy.Time.now().to_sec())
             # Calculates distancePoseStamped
@@ -83,8 +83,12 @@ def move(move_msg):
     print("Getting ready to move")
     print(move_msg)
     vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
-    #fb_pub = rospy.Publisher('motor_feedback', Motor_Feedback, queue_size=10)
+    fb_pub = rospy.Publisher('motor_feedback', Bool, queue_size=10)
     vel_msg = Twist()
+    fb_msg = Bool()
+
+    fb_msg.data = False
+    fb_pub.publish(fb_msg)
 
     sp = move_msg.speed
     di = move_msg.dist
@@ -93,9 +97,11 @@ def move(move_msg):
     fo = move_msg.forward
 
     if an != 0:
-        rotate(an_sp, an/2, vel_msg, vel_pub)
+        rotate(an_sp, an/1.85, vel_msg, vel_pub)
 
-    translate(sp, di*(4/10), fo, vel_msg, vel_pub)
+    translate(sp, di*(10.0/3.86), fo, vel_msg, vel_pub)
+    fb_msg.data = True
+    fb_pub.publish(fb_msg)
     print("Done moving")
     print("--------------------------")
     return 1
