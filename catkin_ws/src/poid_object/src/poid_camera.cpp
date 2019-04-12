@@ -6,19 +6,17 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-//Msg
-#include "/home/robbe/Documents/github/TheRepository/catkin_ws/src/poid/msg/Camera.msg"
+using namespace std;
+using namespace cv;
 
 //Ros includes
 #include "ros/ros.h"
 #include "std_msgs/String.h"
+#include "poid_object/Camera.h"
 
 #include <sstream>
 
 #define BRON 1
-
-using namespace std;
-using namespace cv;
 
 void returnPicture(void) {
     Mat image;
@@ -40,9 +38,9 @@ void returnPicture(void) {
     //imwrite("test.jpg", image);
 }
 
-void getCallback(std_msgs::Camera msg)
+void getCallback(poid_object::Camera msg)
 {
-    ROS_INFO("I heard: [%s]", msg->data.c_str());
+    ROS_INFO("I heard: [%d]", msg.id);
 }
 
 int main(int argc, char **argv)

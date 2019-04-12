@@ -1,7 +1,20 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 
+#include "poid_object/Poic.h"
+
 #include <sstream>
+
+bool ontvangen = false;
+
+void detectCallback(const poid_object::Poic msg)
+{
+  ROS_INFO("Oke, binnengekregen...");
+
+  if(msg.ok == true) {
+    ontvangen = true;
+  }
+}
 
 /**
  * This tutorial demonstrates simple sending of messages over the ROS system.
@@ -46,40 +59,40 @@ add_dependencies(poid_test poid_test_generate_messages_cpp)ings directly, but fo
    * than we can send them, the number here specifies how many messages to 
    * buffer up before throwing some away.
    */
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("detect", 1000);
+  ros::Publisher chatter_pub = n.advertise<poid_object::Poic>("detect", 1000);
+  ros::Subscriber sub = n.subscribe("detect_ok", 1000, detectCallback);
 
   ros::Rate loop_rate(10);
-
-  /**
-   * A count of how many messages we have sent. This is used to create
-   * a unique string for each message.
-   */
   int count = 0;
-  while (ros::ok())
+  int teller = 0;
+
+  while (ros::ok() & (ontvangen == false))
   {
-    /**
-     * This is a message object. You stuff it with data, and then publish it.
-     */
-    std_msgs::String msg;
+    if(teller == 10) {
+      /**
+       * This is a message object. You stuff it with data, and then publish it.
+       */
+      poid_object::Poic msg;
 
-    std::stringstream ss;
-    ss << "hello world " << count;
-    msg.data = ss.str();
+      msg.seq_num = count;
 
-    ROS_INFO("%s", msg.data.c_str());
+      ROS_INFO("%d", msg.seq_num);
+      count++;
 
-    /**
-     * The publish() function is how you send messages. The parameter
-     * is the message object. The type of this object must agree with the type
-     * given as a template parameter to the advertise<>() call, as was done
-     * in the constructor above.
-     */
-    chatter_pub.publish(msg);
+      /**
+       * The publish() function is how you send messages. The parameter
+       * is the message object. The type of this object must agree with the type
+       * given as a template parameter to the advertise<>() call, as was done
+       * in the constructor above.
+       */
+      chatter_pub.publish(msg);
+      teller=0;
+    }
+    teller++;
 
     ros::spinOnce();
 
     loop_rate.sleep();
-    ++count;
   }
 
 

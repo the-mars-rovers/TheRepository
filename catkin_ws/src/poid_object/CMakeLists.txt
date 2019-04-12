@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(poid)
+project(poid_object)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -75,9 +75,9 @@ add_message_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
-  sensor_msgs
+  poid_object
   std_msgs
-  poid
+  sensor_msgs
 )
 
 ################################################
@@ -112,7 +112,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES poid
-#  CATKIN_DEPENDS cv_bridge image_transport roscpp sensor_msgs std_msgs
+  CATKIN_DEPENDS cv_bridge image_transport roscpp sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
 
@@ -208,12 +208,12 @@ include_directories(
 
 add_executable(poid_detect src/poid_detect.cpp)
 target_link_libraries(poid_detect ${catkin_LIBRARIES} ${OpenCV_LIBS})
-add_dependencies(poid_detect poid_detect_generate_messages_cpp)
+add_dependencies(poid_detect generate_messages_cpp)
 
 add_executable(poid_test src/poid_test.cpp)
 target_link_libraries(poid_test ${catkin_LIBRARIES} ${OpenCV_LIBS})
-add_dependencies(poid_test poid_test_generate_messages_cpp)
+add_dependencies(poid_test generate_messages_cpp)
 
 add_executable(poid_camera src/poid_camera.cpp)
 target_link_libraries(poid_camera ${catkin_LIBRARIES} ${OpenCV_LIBS})
-add_dependencies(poid_camera poid_camera_generate_messages_cpp)
+add_dependencies(poid_camera generate_messages_cpp)

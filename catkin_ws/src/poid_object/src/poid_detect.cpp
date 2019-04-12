@@ -8,16 +8,14 @@
 //Ros includes
 #include "ros/ros.h"
 #include "std_msgs/String.h"
+#include "poid_object/Poic.h"
 
 #include <sstream>
 
 using namespace std;
 using namespace cv;
 
-void detectCallback(const std_msgs::String::ConstPtr& msg)
-{
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
-}
+ros::Publisher chatter_pub;
 
 float detect_ball(Mat image) {
     Mat splitImage[3];
@@ -63,6 +61,18 @@ float detect_ball(Mat image) {
     return 0.0;
 }
 
+void detectCallback(const poid_object::Poic msg)
+{
+  ROS_INFO("Sequentie nummer: [%d]", msg.seq_num);
+
+  //Zender verwittigen dat de vraag ontvangen is
+  poid_object::Poic msg_ok;
+  msg_ok.ok = true;
+  chatter_pub.publish(msg_ok);
+
+  
+}
+
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "poid_detect");
@@ -70,6 +80,8 @@ int main(int argc, char **argv)
   ros::NodeHandle n;
 
   ros::Subscriber sub = n.subscribe("detect", 1000, detectCallback);
+
+  chatter_pub = n.advertise<poid_object::Poic>("detect_ok", 1000);
 
   ros::spin();
 
