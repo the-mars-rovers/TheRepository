@@ -1,17 +1,22 @@
+#!/usr/bin/env python
 import rospy
-from std_msgs.msg import Int8
+from std_msgs.msg import UInt16
 from std_msgs.msg import Bool
 
 
 def grip(grip_msg):
-    servo_pub = rospy.Publisher('servo', Int8, queue_size=1)
-    servo_msg = Int8()
-    if grip_msg:
+    """
+    :type grip_msg: Bool
+    """
+    servo_pub = rospy.Publisher('/servo', UInt16, queue_size=1)
+    servo_msg = UInt16()
+    if grip_msg.data:
         servo_msg.data = 45
-        servo_pub.publish(servo_msg)
     else:
         servo_msg.data = 120
-        servo_pub.publish(servo_msg)
+
+    print(servo_msg)
+    servo_pub.publish(servo_msg)
 
 
 def listener():
