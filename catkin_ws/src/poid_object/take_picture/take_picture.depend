@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1554282527 source:/home/robbe/Documents/github/TheRepository/catkin_ws/src/poid/take_picture/main.cpp
+	<iostream>
+	<opencv2/opencv.hpp>
+	<string.h>
+
