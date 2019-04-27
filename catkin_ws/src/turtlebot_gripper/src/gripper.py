@@ -11,9 +11,9 @@ def grip(grip_msg):
     servo_pub = rospy.Publisher('/servo', UInt16, queue_size=1)
     servo_msg = UInt16()
     if grip_msg.data:
-        servo_msg.data = 45
+        servo_msg.data = 80     # gripper close
     else:
-        servo_msg.data = 120
+        servo_msg.data = 120    # gripper open
 
     print(servo_msg)
     servo_pub.publish(servo_msg)
