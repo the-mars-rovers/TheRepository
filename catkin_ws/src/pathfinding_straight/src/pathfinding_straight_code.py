@@ -56,20 +56,29 @@ def update(message):
             waiting_for_feedback = False
             global sequence_number
             sequence_number += 1
-            if sequence_number < 4:
+            if sequence_number < 3:
                 full_rotation(sequence_number)
+            # elif gripper_activated:
+            #     gripper_activated = False
+            #     grip_message = Bool()
+            #     grip_message.data = False
+            #     mov_message = Movement()
+            #     mov_message.speed = 1
+            #     mov_message.dist = -0.1
+            #     mov_message.forward = True
+            #     mov_message.angle_speed = 30
+            #     mov_message.angle = 0
+            #     pub_grip.publish(grip_message)
+            #     pub_mov.publish(mov_message)
             elif gripper_activated:
                 gripper_activated = False
-                grip_message = Bool()
-                grip_message.data = False
-                mov_message = Movement()
-                mov_message.speed = 1
-                mov_message.dist = -0.1
-                mov_message.forward = True
-                mov_message.angle_speed = 30
-                mov_message.angle = 0
-                pub_grip.publish(grip_message)
-                pub_mov.publish(mov_message)
+                new_message = Bool()
+                new_message.data = False
+                pub_grip.publish(new_message)
+                # onto the next object
+                global sequence_number
+                sequence_number = 0
+                full_rotation(0)
             else:
                 new_message = Detect()
                 new_message.seq_num = sequence_number
@@ -79,6 +88,11 @@ def update(message):
     if isinstance(message, Poic):
         # if we are still waiting for feedback from the actuators don't do anything
         if message.distance_to_center != 200 and message.seq_num < 4:
+
+            new_message = Bool()
+            new_message.data = False
+            pub_grip.publish(new_message)
+
             new_message = Movement()
             new_message.angle = 90*message.seq_num + message.distance_to_center
             new_message.angle_speed = 30
@@ -87,10 +101,25 @@ def update(message):
             new_message.forward = True
             pub_mov.publish(new_message)
         elif message.distance_to_center == 200:
-            new_message = Bool
+            new_message = Bool()
             new_message.data = True
             pub_grip.publish(new_message)
+
+            # 360 degree spin with object
+            new_message = Movement()
+            new_message.angle = 360
+            new_message.angle_speed = 30
+            new_message.dist = 0
+            new_message.speed = 0
+            new_message.forward = True
+            pub_mov.publish(new_message)
+
+            global  gripper_activated
+            gripper_activated = True
         else:
+            new_message = Bool()
+            new_message.data = False
+            pub_grip.publish(new_message)
             process_message(message)
 
 
@@ -116,7 +145,7 @@ def full_rotation(number):
     """
     Does a full rotation of the bot, every 90 degrees a picture will be taken.
     """
-    rate = rospy.Rate(4)
+    rate = rospy.Rate(3)
     # create the message for rotation
     mov_message = Movement()
     mov_message.speed = 1

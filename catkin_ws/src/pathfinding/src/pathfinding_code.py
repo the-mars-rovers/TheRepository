@@ -8,17 +8,19 @@
 # imports
 import rospy
 from turtlebot_movement.msg import Movement
-from pathfinding_straight.msg import Poic
-from pathfinding_straight.msg import Detect
+from pathfinding.msg import Poic
+from pathfinding.msg import Detect
 from std_msgs.msg import Bool
 
 
 # publish to movement and detect topics
 pub_mov = rospy.Publisher('motor_instructions', Movement, queue_size=10)
 pub_det = rospy.Publisher('detection', Detect, queue_size=10)
+pub_grip = rospy.Publisher('gripper_movement', Bool, queue_size=10)
 
 waiting_for_feedback = False
 sequence_number = 0
+gripper_activated = False
 
 
 def process_message(message):
@@ -48,13 +50,30 @@ def update(message):
 
     # if the motor is giving feedback
     if isinstance(message, Bool):
-        if message.ready:
+        if message.data:
+            global gripper_activated
             global waiting_for_feedback
             waiting_for_feedback = False
             global sequence_number
             sequence_number += 1
             if sequence_number < 4:
                 full_rotation(sequence_number)
+            elif gripper_activated:
+                gripper_activated = False
+                grip_message = Bool()
+                grip_message.data = False
+                mov_message = Movement()
+                mov_message.speed = 1
+                mov_message.dist = -0.1
+                mov_message.forward = True
+                mov_message.angle_speed = 30
+                mov_message.angle = 0
+                pub_grip.publish(grip_message)
+                pub_mov.publish(mov_message)
+            else:
+                new_message = Detect()
+                new_message.seq_num = sequence_number
+                pub_det.publish(new_message)
 
     # if we  get new information from the camera
     if isinstance(message, Poic):
@@ -67,6 +86,23 @@ def update(message):
             new_message.speed = 0
             new_message.forward = True
             pub_mov.publish(new_message)
+        elif message.distance_to_center == 200:
+            new_message = Bool
+            new_message.data = True
+            pub_grip.publish(new_message)
+
+            # 360 degree spin with object
+            new_message = Movement()
+            new_message.angle = 360
+            new_message.angle_speed = 30
+            new_message.dist = 0
+            new_message.speed = 0
+            new_message.forward = True
+            pub_mov.publish(new_message)
+
+            # onto the next object
+            message.seq_num = 0
+            full_rotation(0)
         else:
             process_message(message)
 
@@ -80,7 +116,7 @@ def listener():
 
     # subscribe to necessary topics
     print("Subscribing ")
-    rospy.Subscriber("motor_feedback", Motor_Feedback, update)
+    rospy.Subscriber("motor_feedback", Bool, update)
     rospy.Subscriber("poic", Poic, update)
 
     # Doing the first 4 rotates for 360 view
