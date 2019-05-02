@@ -44,7 +44,7 @@ int main(int argc, const char** argv) {
 
     split(image, splitImage);
 
-    threshold(splitImage[2], outputR, 130, 255, CV_THRESH_BINARY);
+    threshold(splitImage[2], outputR, 150, 255, CV_THRESH_BINARY);
 
     threshold(splitImage[0], outputB, 100, 255, CV_THRESH_BINARY);
 
@@ -75,7 +75,26 @@ int main(int argc, const char** argv) {
 
     cout << "Center: " << p << " w:" << image.cols << endl;
 
+    float punt = (float)p.y - (float)image.cols/2;
+    punt = punt/((float)image.cols/2) * 90;
+
+    cout << "Punt: " << punt << endl;
+
     circle(image, p, 3, Scalar(0, 255, 0), 3);
+
+    float grote = contours[maximum].size();
+
+    cout << "Grote van de blob:" << grote << endl;
+
+    if(grote < 20) {
+        cout << "Blob is te klein" << endl;
+        return 200.0;
+    }
+
+    if(grote > 500) {
+        cout << "We zijn er!" << endl;
+        return 300.0;
+    }
 
     imshow("Output", image);
     waitKey(0);
