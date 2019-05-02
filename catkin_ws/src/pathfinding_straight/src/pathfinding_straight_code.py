@@ -15,12 +15,14 @@ from std_msgs.msg import Bool
 
 # publish to movement and detect topics
 pub_mov = rospy.Publisher('motor_instructions', Movement, queue_size=10)
-pub_det = rospy.Publisher('detection', Detect, queue_size=10)
+pub_det = rospy.Publisher('Detect', Detect, queue_size=10)
 pub_grip = rospy.Publisher('gripper_movement', Bool, queue_size=10)
 
 waiting_for_feedback = False
 sequence_number = 0
 gripper_activated = False
+poi_found = False
+redo = False
 
 
 def process_message(message):
@@ -57,7 +59,7 @@ def update(message):
             global sequence_number
             sequence_number += 1
             if sequence_number < 3:
-                full_rotation(sequence_number)
+                full_rotation()
             # elif gripper_activated:
             #     gripper_activated = False
             #     grip_message = Bool()
@@ -78,7 +80,7 @@ def update(message):
                 # onto the next object
                 global sequence_number
                 sequence_number = 0
-                full_rotation(0)
+                full_rotation()
             else:
                 new_message = Detect()
                 new_message.seq_num = sequence_number
@@ -87,7 +89,9 @@ def update(message):
     # if we  get new information from the camera
     if isinstance(message, Poic):
         # if we are still waiting for feedback from the actuators don't do anything
+        global poi_found
         if message.distance_to_center != 200 and message.seq_num < 4:
+            poi_found = True
 
             new_message = Bool()
             new_message.data = False
@@ -100,7 +104,7 @@ def update(message):
             new_message.speed = 0
             new_message.forward = True
             pub_mov.publish(new_message)
-        elif message.distance_to_center == 200:
+        elif message.distance_to_center == 300:
             new_message = Bool()
             new_message.data = True
             pub_grip.publish(new_message)
@@ -114,13 +118,27 @@ def update(message):
             new_message.forward = True
             pub_mov.publish(new_message)
 
-            global  gripper_activated
+            global gripper_activated
             gripper_activated = True
         else:
             new_message = Bool()
             new_message.data = False
             pub_grip.publish(new_message)
             process_message(message)
+
+        "If no pois are found in a full rotation"
+        if message.distance_to_center == 200 and not poi_found and message.seq_num == 3:
+            global sequence_number
+            sequence_number = 0
+            new_message = Movement()
+            new_message.angle = 0
+            new_message.angle_speed = 30
+            new_message.dist = 0.5
+            new_message.speed = 0
+            new_message.forward = True
+            pub_mov.publish(new_message)
+
+            full_rotation()
 
 
 def listener():
@@ -133,15 +151,15 @@ def listener():
     # subscribe to necessary topics
     print("Subscribing ")
     rospy.Subscriber("motor_feedback", Bool, update)
-    rospy.Subscriber("poic", Poic, update)
+    rospy.Subscriber("detect_ok", Poic, update)
 
     # Doing the first 4 rotates for 360 view
-    full_rotation(0)
+    full_rotation()
 
     rospy.spin()
 
 
-def full_rotation(number):
+def full_rotation():
     """
     Does a full rotation of the bot, every 90 degrees a picture will be taken.
     """
@@ -158,7 +176,8 @@ def full_rotation(number):
     det_message = Detect()
 
     # rotate 4 times and take a picture
-    det_message.seq_num = number
+    global sequence_number
+    det_message.seq_num = sequence_number
     pub_mov.publish(mov_message)
     rate.sleep()
     pub_det.publish(det_message)
