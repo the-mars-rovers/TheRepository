@@ -10,6 +10,7 @@
 #include "std_msgs/String.h"
 #include "poid_object/Poic.h"
 #include "poid_object/Detect.h"
+#include <cv_bridge/cv_bridge.h>
 #include <sstream>
 
 using namespace std;
@@ -20,6 +21,7 @@ ros::Publisher chatter_pub;
 float detect_ball() {
     //Foto nemen
     Mat image;
+
     cv::VideoCapture vcap;
 
     if(!vcap.open("/dev/video0")) {
